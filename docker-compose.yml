@@ -1,0 +1,24 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: sewing_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: sewing_user
+      POSTGRES_PASSWORD: sewing_pass_dev
+      POSTGRES_DB: sewing_orders
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/src/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sewing_user -d sewing_orders"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 5
+  
+volumes:
+    postgres_data:

@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const pool = require('./db/pool');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -14,6 +15,14 @@ app.use(express.json());
 
 app.get('/health', (req, res) => {
     res.status(200).json({status: 'ok', message: 'Server is running'});
+});
+
+pool.query('SELECT NOW()', (err, res) => {
+  if (err) {
+    console.error('Database connection failed:', err.message);
+  } else {
+    console.log('Connected to PostgreSQL at:', res.rows[0].now);
+  }
 });
 
 app.listen(PORT, () => {
