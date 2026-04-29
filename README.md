@@ -5,3 +5,4 @@ A web application for a seamstress. The seamstress create a client, their order,
 ## Tech stack
 - JavaScript
 - React
+- Docker
