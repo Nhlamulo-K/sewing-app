@@ -5,7 +5,7 @@ const createOrder = async (req, res) => {
 
     try {
         await client.query('BEGIN');
-        const {client_id, garment_type, deadline, price, deposit, fabric_notes, notes} = req.body;
+        const {client_id, garment_type, deadline, price, deposit, fabric_notes, notes, measurements} = req.body;
         const {rows} = await client.query(
             `INSERT INTO orders (client_id, garment_type, deadline, price, deposit, fabric_notes, notes)
             VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,

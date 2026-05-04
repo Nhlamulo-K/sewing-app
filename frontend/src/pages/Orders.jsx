@@ -1,16 +1,23 @@
 import { useState, useEffect } from 'react';
 import { getOrders } from '../services/api';
+import OrderDetail from '../components/OrderDetail';
 
 export default function Orders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
-  useEffect(() => {
+  const fetchOrders = () => {
+    setLoading(true);
     getOrders()
       .then(setOrders)
       .catch(console.error)
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchOrders();
   }, []);
 
   const filtered = filter === 'all'
@@ -41,7 +48,11 @@ export default function Orders() {
       ) : (
         <div className="space-y-3">
           {filtered.map(order => (
-            <div key={order.id} className="bg-white rounded-xl border border-gray-200 p-4">
+            <div
+              key={order.id}
+              onClick={() => setSelectedOrder(order)}
+              className="bg-white rounded-xl border border-gray-200 p-4 cursor-pointer hover:border-indigo-300 hover:shadow-sm transition-all"
+            >
               <div className="flex justify-between items-start">
                 <div>
                   <p className="font-medium text-gray-800">{order.client_name}</p>
@@ -61,11 +72,28 @@ export default function Orders() {
               </div>
               <div className="flex justify-between mt-3 text-sm text-gray-400">
                 <span>📞 {order.client_phone}</span>
-                <span>Due: {new Date(order.deadline).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                <span>Due: {new Date(order.deadline).toLocaleDateString('en-ZA', {
+                  day: 'numeric', month: 'short', year: 'numeric'
+                })}</span>
               </div>
             </div>
           ))}
         </div>
+      )}
+
+      {selectedOrder && (
+        <OrderDetail
+          order={selectedOrder}
+          onClose={() => setSelectedOrder(null)}
+          onUpdate={() => {
+            setSelectedOrder(null);
+            fetchOrders();
+          }}
+          onDelete={() => {
+            setSelectedOrder(null);
+            fetchOrders();
+          }}
+        />
       )}
     </div>
   );
