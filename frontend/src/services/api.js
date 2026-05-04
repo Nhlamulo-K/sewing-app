@@ -38,7 +38,7 @@ export const deleteOrder = (id) =>
         method: 'DELETE',
     }).then(handleResponse);
 
-export const getCliients = () =>
+export const getClients = () =>
     fetch(`${BASE_URL}/api/clients`).then(handleResponse);
 
 export const createClient = (data) => 
