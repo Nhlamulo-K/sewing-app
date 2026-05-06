@@ -22,6 +22,11 @@ app.get('/health', (req, res) => {
     res.status(200).json({status: 'ok', message: 'Server is running'});
 });
 
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+
 pool.query('SELECT NOW()', (err, res) => {
   if (err) {
     console.error('Database connection failed:', err.message);
@@ -33,3 +38,6 @@ pool.query('SELECT NOW()', (err, res) => {
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 });
+}
+
+module.exports = app;
