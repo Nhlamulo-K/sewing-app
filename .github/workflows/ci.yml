@@ -50,15 +50,12 @@ jobs:
         run: |
           psql -h localhost -U sewing_user -d sewing_orders -c "\dt"
 
-      - name: Install Jest globally
-        run: npm install -g jest
-
       - name: Run tests
         env:
           DATABASE_URL: postgresql://sewing_user:sewing_pass_dev@localhost:5432/sewing_orders
           PORT: 5000
           NODE_ENV: test
-        run: cd backend && jest --forceExit
+        run: cd backend && npx --no-install jest --forceExit
 
   build-frontend:
     name: Build frontend
