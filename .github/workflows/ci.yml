@@ -55,7 +55,7 @@ jobs:
           DATABASE_URL: postgresql://sewing_user:sewing_pass_dev@localhost:5432/sewing_orders
           PORT: 5000
           NODE_ENV: test
-        run: cd backend && npm test
+        run: cd backend && npx jest --forceExit
 
   build-frontend:
     name: Build frontend
