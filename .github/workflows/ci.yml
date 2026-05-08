@@ -25,42 +25,55 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-  
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Node.jobs
-        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: backend/package-lock.json
-    
+
       - name: Install dependencies
-        run: cd backend && npm ci
+        run: cd backend && npm install
+
+      - name: Run database migrations
+        env:
+          PGPASSWORD: sewing_pass_dev
+        run: |
+          psql -h localhost -U sewing_user -d sewing_orders -f backend/src/db/init.sql
+          echo "Migration complete"
+
+      - name: Verify tables
+        env:
+          PGPASSWORD: sewing_pass_dev
+        run: |
+          psql -h localhost -U sewing_user -d sewing_orders -c "\dt"
 
       - name: Run tests
+        env:
+          DATABASE_URL: postgresql://sewing_user:sewing_pass_dev@localhost:5432/sewing_orders
+          PORT: 5000
+          NODE_ENV: test
         run: cd backend && npm test
-  
+
   build-frontend:
     name: Build frontend
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Node.json
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
         run: cd frontend && npm install
-      
+
       - name: Build
         run: cd frontend && npm run build
-  
+
   docker-build:
     name: Build Docker images
     runs-on: ubuntu-latest
