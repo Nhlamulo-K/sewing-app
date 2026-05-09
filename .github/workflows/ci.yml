@@ -46,13 +46,6 @@ jobs:
           psql -h localhost -U sewing_user -d sewing_orders --set ON_ERROR_STOP=1 -f backend/src/db/init.sql
           echo "Migration complete"
 
-      - name: Debug connection
-        env:
-          PGPASSWORD: sewing_pass_dev
-        run: |
-          psql -h localhost -U sewing_user -d sewing_orders -c "SELECT current_database();"
-          psql -h localhost -U sewing_user -d sewing_orders -c "\dt"
-
       - name: Run tests
         env:
           DATABASE_URL: postgresql://sewing_user:sewing_pass_dev@localhost:5432/sewing_orders
