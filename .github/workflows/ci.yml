@@ -39,6 +39,13 @@ jobs:
       - name: Install dependencies
         run: cd backend && npm ci
 
+      - name: Debug connection
+        env:
+          PGPASSWORD: sewing_pass_dev
+        run: |
+          psql -h localhost -U sewing_user -d sewing_orders -c "SELECT current_database();"
+          psql -h localhost -U sewing_user -d sewing_orders -c "\dt"
+
       - name: Run tests
         env:
           DATABASE_URL: postgresql://sewing_user:sewing_pass_dev@localhost:5432/sewing_orders
