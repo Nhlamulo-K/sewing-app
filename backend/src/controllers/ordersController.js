@@ -84,7 +84,7 @@ const updateOrder = async (req, res) => {
         await client.query('BEGIN');
         const {garment_type, status, deadline, price, deposit, fabric_notes, notes, measurements} = req.body;
         const {rows} = await client.query(
-            `UPDATE orders SET garment_type=$1, status=$2, deadlne=$3, price=$4,
+            `UPDATE orders SET garment_type=$1, status=$2, deadline=$3, price=$4,
             deposit=$5, fabric_notes=$6, notes=$7 WHERE id=$8  RETURNING *`,
             [garment_type, status, deadline, price, deposit, fabric_notes, notes, req.params.id]
         );

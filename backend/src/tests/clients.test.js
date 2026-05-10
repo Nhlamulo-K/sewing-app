@@ -3,9 +3,6 @@ const app = require('../index');
 const pool = require('../db/pool');
 
 describe('Clients API', () => {
-    afterAll(async () => {
-        await pool.query("DELETE FROM clients WHERE name LIKE '%Test%'");
-    });
 
     it('GET /api/clients should return an array', async () => {
         const res = await request(app).get('/api/clients');
