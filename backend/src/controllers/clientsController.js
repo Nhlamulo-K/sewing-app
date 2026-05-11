@@ -5,8 +5,8 @@ const createClient = async (req, res) => {
         const {name, phone, email} = req.body;
         if (!name) return res.status(400).json({error: 'Name is required'});
         const {rows} = await pool.query(
-            'INSERT INTO clients (name, phone, email) VALUES ($1, $2, $3) RETURNING *',
-            [name, phone, email]
+            'INSERT INTO clients (user_id, name, phone, email) VALUES ($1, $2, $3, $4) RETURNING *',
+            [req.userId, name, phone, email]
         );
         res.status(201).json(rows[0]);
     }
@@ -16,15 +16,15 @@ const createClient = async (req, res) => {
 };
 
 const getAllClients = async (req, res) => {
-    try {
-        const {rows} = await pool.query(
-            'SELECT * FROM clients ORDER BY name ASC'
-        );
-        res.json(rows);
-    }
-    catch (err) {
-        res.status(500).json({error: 'Failed to fetch clients'});
-    }
+  try {
+    const { rows } = await pool.query(
+      'SELECT * FROM clients WHERE user_id = $1 ORDER BY name ASC',
+      [req.userId]
+    );
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch clients' });
+  }
 };
 
 const updateClient = async (req, res) => {
