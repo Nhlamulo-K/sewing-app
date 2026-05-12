@@ -1,49 +1,71 @@
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
+const getToken = () => localStorage.getItem('token');
+
 const handleResponse = async (res) => {
-    if (!res.ok) {
-        const error = await res.json().catch(() => ({error: 'Unknown error'}));
-        throw new Error(error.error || 'Request failed');
-    }
-    if (res.status === 204) return null;
-    return res.json();
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ error: 'Unknown error' }));
+    throw new Error(error.error || 'Request failed');
+  }
+  if (res.status === 204) return null;
+  return res.json();
 };
 
+const authHeaders = () => ({
+  'Content-Type': 'application/json',
+  Authorization: `Bearer ${getToken()}`,
+});
+
+export const register = (data) =>
+  fetch(`${BASE_URL}/api/auth/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  }).then(handleResponse);
+
+export const login = (data) =>
+  fetch(`${BASE_URL}/api/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  }).then(handleResponse);
+
 export const getOrders = (status) => {
-    const url = status
-        ? `${BASE_URL}/api/orders?status=${status}`
-        : `${BASE_URL}/api/orders`;
-    return fetch(url).then(handleResponse);
+  const url = status
+    ? `${BASE_URL}/api/orders?status=${status}`
+    : `${BASE_URL}/api/orders`;
+  return fetch(url, { headers: authHeaders() }).then(handleResponse);
 };
 
 export const getOrder = (id) =>
-    fetch(`${BASE_URL}/api/orders/${id}`).then(handleResponse);
+  fetch(`${BASE_URL}/api/orders/${id}`, { headers: authHeaders() }).then(handleResponse);
 
-export const createOrder = (data) => 
-    fetch(`${BASE_URL}/api/orders`, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(data),
-    }).then(handleResponse);
+export const createOrder = (data) =>
+  fetch(`${BASE_URL}/api/orders`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify(data),
+  }).then(handleResponse);
 
 export const updateOrder = (id, data) =>
-    fetch(`${BASE_URL}/api/orders/${id}`, {
-        method: 'PUT',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(data),
-    }).then(handleResponse);
+  fetch(`${BASE_URL}/api/orders/${id}`, {
+    method: 'PUT',
+    headers: authHeaders(),
+    body: JSON.stringify(data),
+  }).then(handleResponse);
 
 export const deleteOrder = (id) =>
-    fetch(`${BASE_URL}/api/orders/${id}`, {
-        method: 'DELETE',
-    }).then(handleResponse);
+  fetch(`${BASE_URL}/api/orders/${id}`, {
+    method: 'DELETE',
+    headers: authHeaders(),
+  }).then(handleResponse);
 
 export const getClients = () =>
-    fetch(`${BASE_URL}/api/clients`).then(handleResponse);
+  fetch(`${BASE_URL}/api/clients`, { headers: authHeaders() }).then(handleResponse);
 
-export const createClient = (data) => 
-    fetch(`${BASE_URL}/api/clients`, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(data),
-    }).then(handleResponse);
+export const createClient = (data) =>
+  fetch(`${BASE_URL}/api/clients`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify(data),
+  }).then(handleResponse);

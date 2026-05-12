@@ -1,9 +1,12 @@
 import { useState } from 'react';
+import { useAuth } from './context/AuthContext';
 import Dashboard from './pages/Dashboard';
 import Orders from './pages/Orders';
+import Login from './pages/Login';
 import NewOrderForm from './components/NewOrderForm';
 
 export default function App() {
+  const { user, logout, loading } = useAuth();
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [showForm, setShowForm] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -12,6 +15,16 @@ export default function App() {
     setShowForm(false);
     setRefreshKey(prev => prev + 1);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <p className="text-gray-400">Loading...</p>
+      </div>
+    );
+  }
+
+  if (!user) return <Login />;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -45,6 +58,15 @@ export default function App() {
             >
               + New Order
             </button>
+            <div className="flex items-center gap-2 ml-2 pl-2 border-l border-gray-200">
+              <span className="text-sm text-gray-500">{user.name}</span>
+              <button
+                onClick={logout}
+                className="text-sm text-red-500 hover:text-red-700"
+              >
+                Logout
+              </button>
+            </div>
           </div>
         </div>
       </nav>
